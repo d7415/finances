@@ -265,7 +265,7 @@ while not quit:
             print t.view()
     elif command in ["add", "a"]:
         add()
-    elif command in ["edit", "e", "e"]:
+    elif command in ["edit", "e"]:
         if params:
             t = Transaction.load(params[0])
             if t:
