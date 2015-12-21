@@ -5,6 +5,7 @@ from sqlalchemy import *
 #from sqlalchemy import create_engine
 from sqlalchemy.orm import relation, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import text
 
 import sys
 reload(sys)
@@ -340,9 +341,9 @@ while not quit:
         print "------------------------%s---------------------------------%s-------------------------" % (sep, sep)
 #         print "Last 30 %s
 #         print "Total   %s"
-        topm = session.query(func.sum(Transaction.pence).label("total"), Method.name).outerjoin(Method, Transaction.mid==Method.id).group_by(Method.name).order_by("total desc").limit(num).all()
-        topp = session.query(func.sum(Transaction.pence).label("total"), Place.name).outerjoin(Place, Transaction.pid==Place.id).group_by(Place.name).order_by("total desc").limit(num).all()
-        topc = session.query(func.sum(Transaction.pence).label("total"), Category.name).outerjoin(Category, Transaction.cid==Category.id).group_by(Category.name).order_by("total desc").limit(num).all()
+        topm = session.query(func.sum(Transaction.pence).label("total"), Method.name).outerjoin(Method, Transaction.mid==Method.id).group_by(Method.name).order_by(text("total desc")).limit(num).all()
+        topp = session.query(func.sum(Transaction.pence).label("total"), Place.name).outerjoin(Place, Transaction.pid==Place.id).group_by(Place.name).order_by(text("total desc")).limit(num).all()
+        topc = session.query(func.sum(Transaction.pence).label("total"), Category.name).outerjoin(Category, Transaction.cid==Category.id).group_by(Category.name).order_by(text("total desc")).limit(num).all()
         for i in range(num):
             print "%-12s %9s  %s  %-19s %9s  %s  %-13s %9s" % (topm[i][1] if i < len(topm) and topm[i][0] > 0 else "", 
                                                                "%9.2f" % (topm[i][0]/100.0) if i < len(topm) and topm[i][0] > 0 else "", sep, 
