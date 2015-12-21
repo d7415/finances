@@ -131,6 +131,46 @@ class Transaction(Base):
     def load(id):
         return session.query(Transaction).filter(Transaction.id==id).first()
 
+class Template(Base):
+    __tablename__ = 'templates'
+    id = Column(Integer, primary_key=True)
+    date = Column(Integer)
+    mid = Column(Integer, ForeignKey(Method.id, ondelete='cascade'))
+    pid = Column(Integer, ForeignKey(Place.id, ondelete='cascade'))
+    cid = Column(Integer, ForeignKey(Category.id, ondelete='cascade'))
+    pence = Column(Integer)
+    comment = Column(String)
+    method = relation(Method)
+    place = relation(Place)
+    category = relation(Category)
+
+    def amount(self):
+        return float(self.pence)/100
+
+    def pounds(self):
+        return self.pence//100
+
+    @staticmethod
+    def header(sep=""):
+        return "ID   %s Date     %s Method       %s Place               %s Category      %s Cost      %s Comments" % (sep, sep, sep, sep, sep, sep)
+
+    def view(self, sep=""):
+        return "%4s %s ######%s %s %-12s %s %-19s %s %-13s %s %9.2f %s %s" % (self.id, sep, self.date, sep, self.method.name, sep, self.place.name, sep, self.category.name, sep, self.amount(), sep, self.comment)
+
+    @staticmethod
+    def load(id):
+        return session.query(Template).filter(Template.id==id).first()
+
+    def transaction(self, date):
+        t = Transaction()
+        t.date = date
+        t.method = self.method
+        t.place = self.place
+        t.category = self.category
+        t.pence = self.pence
+        t.comment = self.comment
+        return t
+
 
 ## 
 def add():
@@ -162,6 +202,59 @@ def add():
     print t.header()
     print t.view()
 
+def add_template():
+    t = Template()
+    date = raw_input("Date (Day of Month) [01]: ")
+    if date == "":
+        date = "01"
+    t.date = int(date)
+    p = raw_input("Place: ")
+    while p[0] in '%/':
+        for r in session.query(Place.name).filter(Place.name.ilike("%"+p[1:]+"%")).all():
+            print "  > %s" % (r)
+        p = raw_input("Place: ")
+    (t.place, new) = Place.get(p, session)
+    print ">> %s%s" % ("New Place: " if new else "", t.place.name)
+    c = raw_input("Category: ")
+    while c[0] in '%/':
+        for r in session.query(Category.name).filter(Category.name.ilike("%"+c[1:]+"%")).all():
+            print "  > %s" % (r)
+        c = raw_input("Category: ")
+    (t.category, new) = Category.get(c, session)
+    print ">> %s%s" % ("New Category: " if new else "", t.category.name)
+    (t.method, new) = Method.get(raw_input("Method: "), session)
+    print ">> %s%s" % ("New Method: " if new else "", t.method.name)
+    t.pence = int(raw_input("Cost (p): "))
+    t.comment = "[Auto] " + raw_input("Comments: ")
+    session.add(t)
+    session.commit()
+    print t.header()
+    print t.view()
+
+
+def add_from_templates():
+    import datetime
+    s_date = raw_input("Statement Date: ")
+    if s_date == "":
+        s_date = today
+    lastmonth = (datetime.datetime.strptime(s_date, '%Y%m%d') - datetime.timedelta(int(s_date[6:8]))).strftime('%Y%m%d')
+    print Transaction.header()
+
+    Ts = session.query(Template).all()
+    for T in Ts:
+        if int(s_date[6:8]) >= T.date:
+            t = T.transaction(int("%s%02d" % (s_date[:6],T.date)))
+            session.add(t)
+            print t.view()
+        else:
+            if int(lastmonth[6:8]) >= T.date:
+                t = T.transaction(int("%s%02s" % (lastmonth[:6],T.date)))
+            else:
+                t = T.transaction(lastmonth)
+            session.add(t)
+            print t.view()
+    session.commit()
+
 
 def edit(t):
     newval = raw_input("Date (%s): " % t.date)
@@ -185,6 +278,33 @@ def edit(t):
     newval = raw_input("Comments (%s): " % t.comment)
     if newval:
         t.comment = newval
+    session.commit()
+    print t.header()
+    print t.view()
+
+
+def edit_template(t):
+    newval = raw_input("Date (%s): " % t.date)
+    if newval:
+        t.date = int(newval)
+    newval = raw_input("Place (%s): " % t.place.name)
+    if newval:
+        (t.place, new) = Place.get(newval, session)
+        print ">> %s%s" % ("New Place: " if new else "", t.place.name)
+    newval = raw_input("Category (%s): " % t.category.name)
+    if newval:
+        (t.category, new) = Category.get(newval, session)
+        print ">> %s%s" % ("New Category: " if new else "", t.category.name)
+    newval = raw_input("Method (%s): " % t.method.name)
+    if newval:
+        (t.method, new) = Method.get(newval, session)
+        print ">> %s%s" % ("New Method: " if new else "", t.method.name)
+    newval = raw_input("Cost (%s): " % t.pence)
+    if newval:
+        t.pence = int(newval)
+    newval = raw_input("Comments (%s): " % t.comment)
+    if newval:
+        t.comment = "[Auto] " + newval
     session.commit()
     print t.header()
     print t.view()
@@ -266,11 +386,24 @@ while not quit:
             print t.view()
     elif command in ["add", "a"]:
         add()
+    elif command in ["newt", "nt"]:
+        add_template()
+    elif command in ["aft"]: # Add From Templates
+        add_from_templates()
     elif command in ["edit", "e"]:
         if params:
             t = Transaction.load(params[0])
             if t:
                 edit(t)
+            else:
+                print "Invalid transaction ID"
+        else:
+            print "Invalid Syntax"
+    elif command in ["editt", "et"]:
+        if params:
+            t = Template.load(params[0])
+            if t:
+                edit_template(t)
             else:
                 print "Invalid transaction ID"
         else:
