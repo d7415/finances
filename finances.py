@@ -261,10 +261,18 @@ def edit(t):
     if newval:
         t.date = int(newval)
     newval = raw_input("Place (%s): " % t.place.name)
+    while newval and newval[0] in '%/':
+        for r in session.query(Place.name).filter(Place.name.ilike("%"+newval[1:]+"%")).all():
+            print "  > %s" % (r)
+        newval = raw_input("Place: ")
     if newval:
         (t.place, new) = Place.get(newval, session)
         print ">> %s%s" % ("New Place: " if new else "", t.place.name)
     newval = raw_input("Category (%s): " % t.category.name)
+    while newval and newval[0] in '%/':
+        for r in session.query(Category.name).filter(Category.name.ilike("%"+newval[1:]+"%")).all():
+            print "  > %s" % (r)
+        newval = raw_input("Category: ")
     if newval:
         (t.category, new) = Category.get(newval, session)
         print ">> %s%s" % ("New Category: " if new else "", t.category.name)
