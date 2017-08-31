@@ -178,6 +178,8 @@ def add():
     date = raw_input("Date: ")
     if date == "":
         date = today
+    elif date.lower() == "y":
+        date = yday
     t.date = int(date)
     p = raw_input("Place: ")
     while p[0] in '%/':
@@ -237,6 +239,8 @@ def add_from_templates():
     s_date = raw_input("Statement Date: ")
     if s_date == "":
         s_date = today
+    elif s_date.lower() == "y":
+        s_date = yday
     lastmonth = (datetime.datetime.strptime(s_date, '%Y%m%d') - datetime.timedelta(int(s_date[6:8]))).strftime('%Y%m%d')
     print Transaction.header()
 
@@ -373,7 +377,8 @@ quit = False
 # import is elsewhere where necessary and remove.
 import time
 today  = int(time.strftime('%Y%m%d'))
-back7  = int(time.strftime('%Y%m%d', time.localtime(time.time()-7*86400)))
+yday   = int(time.strftime('%Y%m%d', time.localtime(time.time()-   86400)))
+back7  = int(time.strftime('%Y%m%d', time.localtime(time.time()- 7*86400)))
 back30 = int(time.strftime('%Y%m%d', time.localtime(time.time()-30*86400)))
 numdays = (time.time() - time.mktime(time.strptime(str(session.query(func.min(Transaction.date)).first()[0]), '%Y%m%d')))/86400
 
@@ -422,7 +427,7 @@ while not quit:
             if t:
                 print t.header()
                 print t.view()
-                if raw_input("Delete this row? (Y/N): ").lower() == "y":
+                if raw_input("Delete this row? (y/N): ").lower() == "y":
                     session.delete(t)
                     session.commit()
             else:
