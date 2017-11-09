@@ -155,7 +155,7 @@ class Template(Base):
         return "ID   %s Date     %s Method       %s Place               %s Category      %s Cost      %s Comments" % (sep, sep, sep, sep, sep, sep)
 
     def view(self, sep=""):
-        return "%4s %s ######%s %s %-12s %s %-19s %s %-13s %s %9.2f %s %s" % (self.id, sep, self.date, sep, self.method.name, sep, self.place.name, sep, self.category.name, sep, self.amount(), sep, self.comment)
+        return "%4s %s ######%02d %s %-12s %s %-19s %s %-13s %s %9.2f %s %s" % (self.id, sep, self.date, sep, self.method.name, sep, self.place.name, sep, self.category.name, sep, self.amount(), sep, self.comment)
 
     @staticmethod
     def load(id):
@@ -396,6 +396,10 @@ while not quit:
     if command in ["view", "v"]:
         print Transaction.header()
         for t in session.query(Transaction).order_by(Transaction.date.desc()).order_by(Transaction.id.desc()).limit(params[0] if params else 5).from_self().order_by(Transaction.date.asc()).order_by(Transaction.id.asc()).all():
+            print t.view()
+    elif command in ["viewt", "vt"]:
+        print Template.header()
+        for t in session.query(Template).order_by(Template.id.asc()).limit(params[0] if params else 10).all():
             print t.view()
     elif command in ["add", "a"]:
         add()
