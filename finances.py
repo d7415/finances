@@ -401,7 +401,7 @@ while not quit:
             print t.view()
     elif command in ["viewt", "vt"]:
         print Template.header()
-        for t in session.query(Template).order_by(Template.id.asc()).limit(params[0] if params else 10).all():
+        for t in session.query(Template).order_by(Template.date.asc()).order_by(Template.id.asc()).limit(params[0] if params else 10).all():
             print t.view()
     elif command in ["add", "a"]:
         add()
