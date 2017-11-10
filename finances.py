@@ -7,6 +7,8 @@ from sqlalchemy.orm import relation, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import text
 
+import readline
+
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
