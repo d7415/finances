@@ -460,6 +460,26 @@ while not quit:
         Q = Q.from_self().order_by(Transaction.date.asc()).order_by(Transaction.id.asc())
         for t in Q.all():
             print t.view()
+    elif command in ["partial", "ps", "/?"]:
+        print Transaction.header()
+        Q = session.query(Transaction)
+        for i in range(0, len(params), 2):
+            if params[i][0].lower() == "i":
+                Q = Q.filter(Transaction.id.ilike(params[i+1]))
+            elif params[i][0].lower() == "d":
+                Q = Q.filter(Transaction.date.ilike(params[i+1]))
+            elif params[i][0].lower() == "m":
+                Q = Q.join(Method).filter(Method.name.ilike("%%%s%%" % params[i+1]))
+            elif params[i].lower() == "p" or params[i][:2].lower() == "pl":
+                Q = Q.join(Place).filter(Place.name.ilike("%%%s%%" % params[i+1]))
+            elif params[i].lower() == "c" or params[i][:2].lower() == "ca":
+                Q = Q.join(Category).filter(Category.name.ilike("%%%s%%" % params[i+1]))
+            elif len(params[i]) > 1 and params[i][:2].lower() == "co":
+                Q = Q.filter(Transaction.comment.ilike("%%%s%%" % params[i+1]))
+        Q = Q.order_by(Transaction.date.desc()).order_by(Transaction.id.desc()).limit(params[-1] if len(params) % 2 else 10)
+        Q = Q.from_self().order_by(Transaction.date.asc()).order_by(Transaction.id.asc())
+        for t in Q.all():
+            print t.view()
     elif command in ["exact", "es", "//"]:
         print Transaction.header()
         Q = session.query(Transaction)
