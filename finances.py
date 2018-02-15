@@ -447,7 +447,12 @@ while not quit:
             if params[i][0].lower() == "i":
                 Q = Q.filter(Transaction.id.ilike(params[i+1]))
             elif params[i][0].lower() == "d":
-                Q = Q.filter(Transaction.date.ilike(params[i+1]))
+                if params[i+1][0] == "<":
+                    Q = Q.filter(Transaction.date < params[i+1][1:])
+                elif params[i+1][0] == ">":
+                    Q = Q.filter(Transaction.date > params[i+1][1:])
+                else:
+                    Q = Q.filter(Transaction.date == params[i+1])
             elif params[i][0].lower() == "m":
                 Q = Q.join(Method).filter(Method.name.ilike(params[i+1]))
             elif params[i][0].lower() == "p":
@@ -467,7 +472,12 @@ while not quit:
             if params[i][0].lower() == "i":
                 Q = Q.filter(Transaction.id.ilike(params[i+1]))
             elif params[i][0].lower() == "d":
-                Q = Q.filter(Transaction.date.ilike(params[i+1]))
+                if params[i+1][0] == "<":
+                    Q = Q.filter(Transaction.date < params[i+1][1:])
+                elif params[i+1][0] == ">":
+                    Q = Q.filter(Transaction.date > params[i+1][1:])
+                else:
+                    Q = Q.filter(Transaction.date == params[i+1])
             elif params[i][0].lower() == "m":
                 Q = Q.join(Method).filter(Method.name.ilike("%%%s%%" % params[i+1]))
             elif params[i].lower() == "p" or params[i][:2].lower() == "pl":
@@ -487,7 +497,12 @@ while not quit:
             if params[i][0].lower() == "i":
                 Q = Q.filter(Transaction.id == params[i+1])
             elif params[i][0].lower() == "d":
-                Q = Q.filter(Transaction.date == params[i+1])
+                if params[i+1][0] == "<":
+                    Q = Q.filter(Transaction.date < params[i+1][1:])
+                elif params[i+1][0] == ">":
+                    Q = Q.filter(Transaction.date > params[i+1][1:])
+                else:
+                    Q = Q.filter(Transaction.date == params[i+1])
             elif params[i][0].lower() == "m":
                 Q = Q.join(Method).filter(Method.name == params[i+1])
             elif params[i][0].lower() == "p":
