@@ -452,7 +452,7 @@ while not quit:
                 elif params[i+1][0] == ">":
                     Q = Q.filter(Transaction.date > params[i+1][1:])
                 else:
-                    Q = Q.filter(Transaction.date == params[i+1])
+                    Q = Q.filter(Transaction.date.ilike(params[i+1]))
             elif params[i][0].lower() == "m":
                 Q = Q.join(Method).filter(Method.name.ilike(params[i+1]))
             elif params[i][0].lower() == "p":
@@ -477,7 +477,7 @@ while not quit:
                 elif params[i+1][0] == ">":
                     Q = Q.filter(Transaction.date > params[i+1][1:])
                 else:
-                    Q = Q.filter(Transaction.date == params[i+1])
+                    Q = Q.filter(Transaction.date.ilike("%%%s%%" % params[i+1]))
             elif params[i][0].lower() == "m":
                 Q = Q.join(Method).filter(Method.name.ilike("%%%s%%" % params[i+1]))
             elif params[i].lower() == "p" or params[i][:2].lower() == "pl":
