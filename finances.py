@@ -445,7 +445,12 @@ while not quit:
         Q = session.query(Transaction)
         for i in range(0, len(params), 2):
             if params[i][0].lower() == "i":
-                Q = Q.filter(Transaction.id.ilike(params[i+1]))
+                if params[i+1][0] == "<":
+                    Q = Q.filter(Transaction.id < params[i+1][1:])
+                elif params[i+1][0] == ">":
+                    Q = Q.filter(Transaction.id > params[i+1][1:])
+                else:
+                    Q = Q.filter(Transaction.id.ilike(params[i+1]))
             elif params[i][0].lower() == "d":
                 if params[i+1][0] == "<":
                     Q = Q.filter(Transaction.date < params[i+1][1:])
@@ -470,7 +475,12 @@ while not quit:
         Q = session.query(Transaction)
         for i in range(0, len(params), 2):
             if params[i][0].lower() == "i":
-                Q = Q.filter(Transaction.id.ilike(params[i+1]))
+                if params[i+1][0] == "<":
+                    Q = Q.filter(Transaction.id < params[i+1][1:])
+                elif params[i+1][0] == ">":
+                    Q = Q.filter(Transaction.id > params[i+1][1:])
+                else:
+                    Q = Q.filter(Transaction.id.ilike(params[i+1]))
             elif params[i][0].lower() == "d":
                 if params[i+1][0] == "<":
                     Q = Q.filter(Transaction.date < params[i+1][1:])
