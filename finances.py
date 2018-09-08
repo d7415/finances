@@ -562,7 +562,26 @@ while not quit:
                                                                topc[i][1] if i < len(topc) and topc[i][0] > 0 else "", 
                                                                "%9.2f" % (topc[i][0]/100.0) if i < len(topc) and topc[i][0] > 0 else "")
     elif command in ["help", "h", "?"]:
-        pass
+        print "Help:"
+        print "Command                Description"
+        print "--------------------------------------------------------------------------------------"
+        print "view, v                View last n transactions"
+        print "viewt, vt              View transaction templates"
+        print "add, a                 Add a new transaction"
+        print "newt, nt               Add a new transaction template"
+        print "edit, e                Edit a transaction"
+        print "delete, del, d         Delete a transaction"
+        print "deletet, delt, dt      Delete a transaction template"
+        print "stats, st              Show statistics"
+        print "help, h, ?             Show this help"
+        print "quit, exit, q, x       Quit"
+        print "aft                    Add transactions from templates. Used for recurring transactions"
+        print "editt, et              Edit a transaction template"
+        print "search, s, /           Search for transactions (SQL \"x ILIKE y\")"
+        print "partial, ps, /?        Search for transactions (SQL \"x ILIKE %y%\")"
+        print "exact, es, //          Search for transactions (SQL \"x == y\""
+        print "                       "
+        print "                       "
     elif command in ["quit", "exit", "q", "x"]:
         quit = True
     else:
