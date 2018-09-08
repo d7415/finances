@@ -433,11 +433,24 @@ while not quit:
             if t:
                 print t.header()
                 print t.view()
-                if raw_input("Delete this row? (y/N): ").lower() == "y":
+                if raw_input("Delete this transaction? (y/N): ").lower() == "y":
                     session.delete(t)
                     session.commit()
             else:
                 print "Invalid transaction ID"
+        else:
+            print "Invalid Syntax"
+    elif command in ["deletet", "delt", "dt"]:
+        if params:
+            t = Template.load(params[0])
+            if t:
+                print t.header()
+                print t.view()
+                if raw_input("Delete this template? (y/N): ").lower() == "y":
+                    session.delete(t)
+                    session.commit()
+            else:
+                print "Invalid template ID"
         else:
             print "Invalid Syntax"
     elif command in ["search", "s", "/"]:
