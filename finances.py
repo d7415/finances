@@ -251,14 +251,14 @@ def add_from_templates():
         if int(s_date[6:8]) >= T.date:
             t = T.transaction(int("%s%02d" % (s_date[:6],T.date)))
             session.add(t)
-            print t.view()
         else:
             if int(lastmonth[6:8]) >= T.date:
                 t = T.transaction(int("%s%02s" % (lastmonth[:6],T.date)))
             else:
                 t = T.transaction(lastmonth)
             session.add(t)
-            print t.view()
+    for t in session.query(Transaction).order_by(desc(Transaction.id)).limit(len(Ts)).from_self().order_by(asc(Transaction.date)).all():
+        print t.view()
     session.commit()
 
 
