@@ -183,23 +183,41 @@ def add():
     elif date.lower() == "y":
         date = yday
     t.date = int(date)
-    p = raw_input("Place: ")
-    while p[0] in '%/':
-        for r in session.query(Place.name).filter(Place.name.ilike("%"+p[1:]+"%")).all():
-            print "  > %s" % (r)
-        p = raw_input("Place: ")
-    (t.place, new) = Place.get(p, session)
-    print ">> %s%s" % ("New Place: " if new else "", t.place.name)
-    c = raw_input("Category: ")
-    while c[0] in '%/':
-        for r in session.query(Category.name).filter(Category.name.ilike("%"+c[1:]+"%")).all():
-            print "  > %s" % (r)
-        c = raw_input("Category: ")
-    (t.category, new) = Category.get(c, session)
-    print ">> %s%s" % ("New Category: " if new else "", t.category.name)
-    (t.method, new) = Method.get(raw_input("Method: "), session)
-    print ">> %s%s" % ("New Method: " if new else "", t.method.name)
-    t.pence = int(raw_input("Cost (p): "))
+    dplace = session.query(Transaction).order_by(desc(Transaction.id)).first().place
+    p = raw_input("Place (%s): " % dplace.name)
+    if not p:
+        t.place = dplace
+        print ">> %s" % (t.place.name)
+    else:
+        while p[0] in '%/':
+            for r in session.query(Place.name).filter(Place.name.ilike("%"+p[1:]+"%")).all():
+                print "  > %s" % (r)
+            p = raw_input("Place: ")
+        (t.place, new) = Place.get(p, session)
+        print ">> %s%s" % ("New Place: " if new else "", t.place.name)
+    dcat = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first().category
+    c = raw_input("Category (%s): " % dcat.name)
+    if not c:
+        t.category = dcat
+        print ">> %s" % (t.category.name)
+    else:
+        while c[0] in '%/':
+            for r in session.query(Category.name).filter(Category.name.ilike("%"+c[1:]+"%")).all():
+                print "  > %s" % (r)
+            c = raw_input("Category: ")
+        (t.category, new) = Category.get(c, session)
+        print ">> %s%s" % ("New Category: " if new else "", t.category.name)
+    dm = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first().method
+    m = raw_input("Method (%s): " % dm.name)
+    if not m:
+        t.method = dm
+        print ">> %s" % (t.method.name)
+    else:
+        (t.method, new) = Method.get(m, session)
+        print ">> %s%s" % ("New Method: " if new else "", t.method.name)
+    dpence = session.query(Transaction).filter_by(place=t.place).filter_by(category=t.category).filter_by(method=t.method).order_by(desc(Transaction.id)).first()
+    dpence = dpence.pence if dpence else 0
+    t.pence = int(raw_input("Cost (p) (%d): " % dpence) or dpence)
     t.comment = raw_input("Comments: ")
     session.add(t)
     session.commit()
