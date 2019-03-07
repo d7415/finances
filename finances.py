@@ -195,8 +195,9 @@ def add():
             p = raw_input("Place: ")
         (t.place, new) = Place.get(p, session)
         print ">> %s%s" % ("New Place: " if new else "", t.place.name)
-    dcat = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first().category
-    c = raw_input("Category (%s): " % dcat.name)
+    dcat = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first()
+    dcat = dcat.category if dcat else None
+    c = raw_input("Category (%s): " % (dcat.name if dcat else "?"))
     if not c:
         t.category = dcat
         print ">> %s" % (t.category.name)
@@ -207,8 +208,9 @@ def add():
             c = raw_input("Category: ")
         (t.category, new) = Category.get(c, session)
         print ">> %s%s" % ("New Category: " if new else "", t.category.name)
-    dm = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first().method
-    m = raw_input("Method (%s): " % dm.name)
+    dm = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first()
+    dm = dm.method if dm else None
+    m = raw_input("Method (%s): " % (dm.name if dm else "?"))
     if not m:
         t.method = dm
         print ">> %s" % (t.method.name)
