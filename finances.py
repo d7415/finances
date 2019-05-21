@@ -226,6 +226,54 @@ def add():
     print t.header()
     print t.view()
 
+def add_double_entry():
+    t = Transaction()
+    t2 = Transaction()
+    date = raw_input("Date: ")
+    if date == "":
+        date = today
+    elif date.lower() == "y":
+        date = yday
+    t.date = int(date)
+    t.place = session.query(Place).filter(Place.name == "Misc").first()
+    t.category = session.query(Category).filter(Category.name == "Misc").first()
+
+    t2.date = t.date
+    t2.place = t.place
+    t2.category = t.category
+
+    dm = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first()
+    dm = dm.method if dm else None
+    m = raw_input("From Method (%s): " % (dm.name if dm else "?"))
+    if not m:
+        t.method = dm
+        print ">> %s" % (t.method.name)
+    else:
+        (t.method, new) = Method.get(m, session)
+        print ">> %s%s" % ("New Method: " if new else "", t.method.name)
+
+    m = raw_input("To Method (%s): " % (dm.name if dm else "?"))
+    if not m:
+        t2.method = dm
+        print ">> %s" % (t2.method.name)
+    else:
+        (t2.method, new) = Method.get(m, session)
+        print ">> %s%s" % ("New Method: " if new else "", t2.method.name)
+    dpence = session.query(Transaction).filter_by(place=t.place).filter_by(category=t.category).filter_by(method=t.method).order_by(desc(Transaction.id)).first()
+    dpence = abs(dpence.pence) if dpence else 0
+    t.pence = int(raw_input("Amount (p) (%d): " % dpence) or dpence)
+    t2.pence = -t.pence
+    t.comment = raw_input("Comments: ")
+    session.add(t)
+    session.commit()
+    t2.comment = t.comment + " (#%d)" % (t.id)
+    t.comment += " (#%d)" % (t.id + 1)
+    session.add(t2)
+    session.commit()
+    print t.header()
+    print t.view()
+    print t2.view()
+
 def add_template():
     t = Template()
     date = raw_input("Date (Day of Month) [01]: ")
@@ -425,6 +473,8 @@ while not quit:
             print t.view()
     elif command in ["add", "a"]:
         add()
+    elif command in ["ade"]:
+        add_double_entry()
     elif command in ["newt", "nt"]:
         add_template()
     elif command in ["aft"]: # Add From Templates
