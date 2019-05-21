@@ -407,7 +407,7 @@ numdays = (time.time() - time.mktime(time.strptime(str(session.query(func.min(Tr
 while not quit:
     
     user_input = raw_input("What do you want to do today? ")
-    command = user_input.split(" ", 1)[0]
+    command = user_input.strip(" ").split(" ", 1)[0]
     params=[]
     try:
         [paramstr] = user_input.split(" ", 1)[1:]
