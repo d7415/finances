@@ -1,4 +1,4 @@
-#!/usr/bin/env python 3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import *
@@ -8,10 +8,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import text
 
 import readline
-
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
 
 # Create connection
 engine = create_engine('sqlite:///finances')
