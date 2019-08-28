@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python 3
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import *
@@ -187,44 +187,44 @@ def add():
     p = raw_input("Place (%s): " % dplace.name)
     if not p:
         t.place = dplace
-        print ">> %s" % (t.place.name)
+        print(">> %s" % (t.place.name))
     else:
         while p[0] in '%/':
             for r in session.query(Place.name).filter(Place.name.ilike("%"+p[1:]+"%")).all():
-                print "  > %s" % (r)
+                print("  > %s" % (r))
             p = raw_input("Place: ")
         (t.place, new) = Place.get(p, session)
-        print ">> %s%s" % ("New Place: " if new else "", t.place.name)
+        print(">> %s%s" % ("New Place: " if new else "", t.place.name))
     dcat = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first()
     dcat = dcat.category if dcat else None
     c = raw_input("Category (%s): " % (dcat.name if dcat else "?"))
     if not c:
         t.category = dcat
-        print ">> %s" % (t.category.name)
+        print(">> %s" % (t.category.name))
     else:
         while c[0] in '%/':
             for r in session.query(Category.name).filter(Category.name.ilike("%"+c[1:]+"%")).all():
-                print "  > %s" % (r)
+                print("  > %s" % (r))
             c = raw_input("Category: ")
         (t.category, new) = Category.get(c, session)
-        print ">> %s%s" % ("New Category: " if new else "", t.category.name)
+        print(">> %s%s" % ("New Category: " if new else "", t.category.name))
     dm = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first()
     dm = dm.method if dm else None
     m = raw_input("Method (%s): " % (dm.name if dm else "?"))
     if not m:
         t.method = dm
-        print ">> %s" % (t.method.name)
+        print(">> %s" % (t.method.name))
     else:
         (t.method, new) = Method.get(m, session)
-        print ">> %s%s" % ("New Method: " if new else "", t.method.name)
+        print(">> %s%s" % ("New Method: " if new else "", t.method.name))
     dpence = session.query(Transaction).filter_by(place=t.place).filter_by(category=t.category).filter_by(method=t.method).order_by(desc(Transaction.id)).first()
     dpence = dpence.pence if dpence else 0
     t.pence = int(raw_input("Cost (p) (%d): " % dpence) or dpence)
     t.comment = raw_input("Comments: ")
     session.add(t)
     session.commit()
-    print t.header()
-    print t.view()
+    print(t.header())
+    print(t.view())
 
 def add_double_entry():
     t = Transaction()
@@ -247,18 +247,18 @@ def add_double_entry():
     m = raw_input("From Method (%s): " % (dm.name if dm else "?"))
     if not m:
         t.method = dm
-        print ">> %s" % (t.method.name)
+        print(">> %s" % (t.method.name))
     else:
         (t.method, new) = Method.get(m, session)
-        print ">> %s%s" % ("New Method: " if new else "", t.method.name)
+        print(">> %s%s" % ("New Method: " if new else "", t.method.name))
 
     m = raw_input("To Method (%s): " % (dm.name if dm else "?"))
     if not m:
         t2.method = dm
-        print ">> %s" % (t2.method.name)
+        print(">> %s" % (t2.method.name))
     else:
         (t2.method, new) = Method.get(m, session)
-        print ">> %s%s" % ("New Method: " if new else "", t2.method.name)
+        print(">> %s%s" % ("New Method: " if new else "", t2.method.name))
     dpence = session.query(Transaction).filter_by(place=t.place).filter_by(category=t.category).filter_by(method=t.method).order_by(desc(Transaction.id)).first()
     dpence = abs(dpence.pence) if dpence else 0
     t.pence = int(raw_input("Amount (p) (%d): " % dpence) or dpence)
@@ -270,9 +270,9 @@ def add_double_entry():
     t.comment += " (#%d)" % (t.id + 1)
     session.add(t2)
     session.commit()
-    print t.header()
-    print t.view()
-    print t2.view()
+    print(t.header())
+    print(t.view())
+    print(t2.view())
 
 def add_template():
     t = Template()
@@ -283,25 +283,25 @@ def add_template():
     p = raw_input("Place: ")
     while p[0] in '%/':
         for r in session.query(Place.name).filter(Place.name.ilike("%"+p[1:]+"%")).all():
-            print "  > %s" % (r)
+            print("  > %s" % (r))
         p = raw_input("Place: ")
     (t.place, new) = Place.get(p, session)
-    print ">> %s%s" % ("New Place: " if new else "", t.place.name)
+    print(">> %s%s" % ("New Place: " if new else "", t.place.name))
     c = raw_input("Category: ")
     while c[0] in '%/':
         for r in session.query(Category.name).filter(Category.name.ilike("%"+c[1:]+"%")).all():
-            print "  > %s" % (r)
+            print("  > %s" % (r))
         c = raw_input("Category: ")
     (t.category, new) = Category.get(c, session)
-    print ">> %s%s" % ("New Category: " if new else "", t.category.name)
+    print(">> %s%s" % ("New Category: " if new else "", t.category.name))
     (t.method, new) = Method.get(raw_input("Method: "), session)
-    print ">> %s%s" % ("New Method: " if new else "", t.method.name)
+    print(">> %s%s" % ("New Method: " if new else "", t.method.name))
     t.pence = int(raw_input("Cost (p): "))
     t.comment = "[Auto] " + raw_input("Comments: ")
     session.add(t)
     session.commit()
-    print t.header()
-    print t.view()
+    print(t.header())
+    print(t.view())
 
 
 def add_from_templates():
@@ -312,7 +312,7 @@ def add_from_templates():
     elif s_date.lower() == "y":
         s_date = yday
     lastmonth = (datetime.datetime.strptime(s_date, '%Y%m%d') - datetime.timedelta(int(s_date[6:8]))).strftime('%Y%m%d')
-    print Transaction.header()
+    print(Transaction.header())
 
     Ts = session.query(Template).all()
     for T in Ts:
@@ -326,7 +326,7 @@ def add_from_templates():
                 t = T.transaction(lastmonth)
             session.add(t)
     for t in session.query(Transaction).order_by(desc(Transaction.id)).limit(len(Ts)).from_self().order_by(asc(Transaction.date)).all():
-        print t.view()
+        print(t.view())
     session.commit()
 
 
@@ -337,23 +337,23 @@ def edit(t):
     newval = raw_input("Place (%s): " % t.place.name)
     while newval and newval[0] in '%/':
         for r in session.query(Place.name).filter(Place.name.ilike("%"+newval[1:]+"%")).all():
-            print "  > %s" % (r)
+            print("  > %s" % (r))
         newval = raw_input("Place: ")
     if newval:
         (t.place, new) = Place.get(newval, session)
-        print ">> %s%s" % ("New Place: " if new else "", t.place.name)
+        print(">> %s%s" % ("New Place: " if new else "", t.place.name))
     newval = raw_input("Category (%s): " % t.category.name)
     while newval and newval[0] in '%/':
         for r in session.query(Category.name).filter(Category.name.ilike("%"+newval[1:]+"%")).all():
-            print "  > %s" % (r)
+            print("  > %s" % (r))
         newval = raw_input("Category: ")
     if newval:
         (t.category, new) = Category.get(newval, session)
-        print ">> %s%s" % ("New Category: " if new else "", t.category.name)
+        print(">> %s%s" % ("New Category: " if new else "", t.category.name))
     newval = raw_input("Method (%s): " % t.method.name)
     if newval:
         (t.method, new) = Method.get(newval, session)
-        print ">> %s%s" % ("New Method: " if new else "", t.method.name)
+        print(">> %s%s" % ("New Method: " if new else "", t.method.name))
     newval = raw_input("Cost (%s): " % t.pence)
     if newval:
         t.pence = int(newval)
@@ -361,8 +361,8 @@ def edit(t):
     if newval:
         t.comment = newval
     session.commit()
-    print t.header()
-    print t.view()
+    print(t.header())
+    print(t.view())
 
 
 def edit_template(t):
@@ -372,15 +372,15 @@ def edit_template(t):
     newval = raw_input("Place (%s): " % t.place.name)
     if newval:
         (t.place, new) = Place.get(newval, session)
-        print ">> %s%s" % ("New Place: " if new else "", t.place.name)
+        print(">> %s%s" % ("New Place: " if new else "", t.place.name))
     newval = raw_input("Category (%s): " % t.category.name)
     if newval:
         (t.category, new) = Category.get(newval, session)
-        print ">> %s%s" % ("New Category: " if new else "", t.category.name)
+        print(">> %s%s" % ("New Category: " if new else "", t.category.name))
     newval = raw_input("Method (%s): " % t.method.name)
     if newval:
         (t.method, new) = Method.get(newval, session)
-        print ">> %s%s" % ("New Method: " if new else "", t.method.name)
+        print(">> %s%s" % ("New Method: " if new else "", t.method.name))
     newval = raw_input("Cost (%s): " % t.pence)
     if newval:
         t.pence = int(newval)
@@ -388,8 +388,8 @@ def edit_template(t):
     if newval:
         t.comment = "[Auto] " + newval
     session.commit()
-    print t.header()
-    print t.view()
+    print(t.header())
+    print(t.view())
 
 
 def datemdays(days):
@@ -464,13 +464,13 @@ while not quit:
         pass
 
     if command in ["view", "v"]:
-        print Transaction.header()
+        print(Transaction.header())
         for t in session.query(Transaction).order_by(Transaction.date.desc()).order_by(Transaction.id.desc()).limit(params[0] if params else 5).from_self().order_by(Transaction.date.asc()).order_by(Transaction.id.asc()).all():
-            print t.view()
+            print(t.view())
     elif command in ["viewt", "vt"]:
-        print Template.header()
+        print(Template.header())
         for t in session.query(Template).order_by(Template.date.asc()).order_by(Template.id.asc()).limit(params[0] if params else 10).all():
-            print t.view()
+            print(t.view())
     elif command in ["add", "a"]:
         add()
     elif command in ["ade"]:
@@ -485,46 +485,46 @@ while not quit:
             if t:
                 edit(t)
             else:
-                print "Invalid transaction ID"
+                print("Invalid transaction ID")
         else:
-            print "Invalid Syntax"
+            print("Invalid Syntax")
     elif command in ["editt", "et"]:
         if params:
             t = Template.load(params[0])
             if t:
                 edit_template(t)
             else:
-                print "Invalid transaction ID"
+                print("Invalid transaction ID")
         else:
-            print "Invalid Syntax"
+            print("Invalid Syntax")
     elif command in ["delete", "del", "d"]:
         if params:
             t = Transaction.load(params[0])
             if t:
-                print t.header()
-                print t.view()
+                print(t.header())
+                print(t.view())
                 if raw_input("Delete this transaction? (y/N): ").lower() == "y":
                     session.delete(t)
                     session.commit()
             else:
-                print "Invalid transaction ID"
+                print("Invalid transaction ID")
         else:
-            print "Invalid Syntax"
+            print("Invalid Syntax")
     elif command in ["deletet", "delt", "dt"]:
         if params:
             t = Template.load(params[0])
             if t:
-                print t.header()
-                print t.view()
+                print(t.header())
+                print(t.view())
                 if raw_input("Delete this template? (y/N): ").lower() == "y":
                     session.delete(t)
                     session.commit()
             else:
-                print "Invalid template ID"
+                print("Invalid template ID")
         else:
-            print "Invalid Syntax"
+            print("Invalid Syntax")
     elif command in ["search", "s", "/"]:
-        print Transaction.header()
+        print(Transaction.header())
         Q = session.query(Transaction)
         for i in range(0, len(params), 2):
             if params[i][0].lower() == "i":
@@ -552,9 +552,9 @@ while not quit:
         Q = Q.order_by(Transaction.date.desc()).order_by(Transaction.id.desc()).limit(params[-1] if len(params) % 2 else 10)
         Q = Q.from_self().order_by(Transaction.date.asc()).order_by(Transaction.id.asc())
         for t in Q.all():
-            print t.view()
+            print(t.view())
     elif command in ["partial", "ps", "/?"]:
-        print Transaction.header()
+        print(Transaction.header())
         Q = session.query(Transaction)
         for i in range(0, len(params), 2):
             if params[i][0].lower() == "i":
@@ -582,9 +582,9 @@ while not quit:
         Q = Q.order_by(Transaction.date.desc()).order_by(Transaction.id.desc()).limit(params[-1] if len(params) % 2 else 10)
         Q = Q.from_self().order_by(Transaction.date.asc()).order_by(Transaction.id.asc())
         for t in Q.all():
-            print t.view()
+            print(t.view())
     elif command in ["exact", "es", "//"]:
-        print Transaction.header()
+        print(Transaction.header())
         Q = session.query(Transaction)
         for i in range(0, len(params), 2):
             if params[i][0].lower() == "i":
@@ -607,51 +607,51 @@ while not quit:
         Q = Q.order_by(Transaction.date.desc()).order_by(Transaction.id.desc()).limit(params[-1] if len(params) % 2 else 10)
         Q = Q.from_self().order_by(Transaction.date.asc()).order_by(Transaction.id.asc())
         for t in Q.all():
-            print t.view()
+            print(t.view())
     elif command in ["stats", "st"]:
         sep = ""
         num = int(params[0]) if params else 3
-        print "Today   %9.2f %s Last 7 %9.2f %s Last 30 %9.2f" % ((session.query(func.sum(Transaction.pence), Transaction.date).filter(Transaction.date== today).first()[0] or 0)/100.0, sep,
+        print("Today   %9.2f %s Last 7 %9.2f %s Last 30 %9.2f" % ((session.query(func.sum(Transaction.pence), Transaction.date).filter(Transaction.date== today).first()[0] or 0)/100.0, sep,
                                                                   (session.query(func.sum(Transaction.pence), Transaction.date).filter(Transaction.date>= back7).first()[0] or 0)/100.0, sep,
-                                                                  (session.query(func.sum(Transaction.pence), Transaction.date).filter(Transaction.date>=back30).first()[0] or 0)/100.0)
+                                                                  (session.query(func.sum(Transaction.pence), Transaction.date).filter(Transaction.date>=back30).first()[0] or 0)/100.0))
         gtotal = session.query(func.sum(Transaction.pence)).first()[0]/100
-        print "Avg Day %9.2f %s  Avg 7 %9.2f %s  Avg 30 %9.2f" % (gtotal/numdays, sep, 7*gtotal/numdays, sep, 30*gtotal/numdays)
-        print ""
-        print "Method                  %s  Place                          %s  Category" % (sep, sep)
-        print "------------------------%s---------------------------------%s-------------------------" % (sep, sep)
-#         print "Last 30 %s
-#         print "Total   %s"
+        print("Avg Day %9.2f %s  Avg 7 %9.2f %s  Avg 30 %9.2f" % (gtotal/numdays, sep, 7*gtotal/numdays, sep, 30*gtotal/numdays))
+        print("")
+        print("Method                  %s  Place                          %s  Category" % (sep, sep))
+        print("------------------------%s---------------------------------%s-------------------------" % (sep, sep))
+#         print("Last 30 %s)
+#         print("Total   %s")
         topm = session.query(func.sum(Transaction.pence).label("total"), Method.name).outerjoin(Method, Transaction.mid==Method.id).group_by(Method.name).order_by(text("total desc")).limit(num).all()
         topp = session.query(func.sum(Transaction.pence).label("total"), Place.name).outerjoin(Place, Transaction.pid==Place.id).group_by(Place.name).order_by(text("total desc")).limit(num).all()
         topc = session.query(func.sum(Transaction.pence).label("total"), Category.name).outerjoin(Category, Transaction.cid==Category.id).group_by(Category.name).order_by(text("total desc")).limit(num).all()
         for i in range(num):
-            print "%-12s %9s  %s  %-19s %9s  %s  %-13s %9s" % (topm[i][1] if i < len(topm) and topm[i][0] > 0 else "", 
+            print("%-12s %9s  %s  %-19s %9s  %s  %-13s %9s" % (topm[i][1] if i < len(topm) and topm[i][0] > 0 else "", 
                                                                "%9.2f" % (topm[i][0]/100.0) if i < len(topm) and topm[i][0] > 0 else "", sep, 
                                                                topp[i][1] if i < len(topp) and topp[i][0] > 0 else "", 
                                                                "%9.2f" % (topp[i][0]/100.0) if i < len(topp) and topp[i][0] > 0 else "", sep, 
                                                                topc[i][1] if i < len(topc) and topc[i][0] > 0 else "", 
-                                                               "%9.2f" % (topc[i][0]/100.0) if i < len(topc) and topc[i][0] > 0 else "")
+                                                               "%9.2f" % (topc[i][0]/100.0) if i < len(topc) and topc[i][0] > 0 else ""))
     elif command in ["help", "h", "?"]:
-        print "Help:"
-        print "Command                Description"
-        print "--------------------------------------------------------------------------------------"
-        print "view, v                View last n transactions"
-        print "viewt, vt              View transaction templates"
-        print "add, a                 Add a new transaction"
-        print "newt, nt               Add a new transaction template"
-        print "edit, e                Edit a transaction"
-        print "delete, del, d         Delete a transaction"
-        print "deletet, delt, dt      Delete a transaction template"
-        print "stats, st              Show statistics"
-        print "help, h, ?             Show this help"
-        print "quit, exit, q, x       Quit"
-        print "aft                    Add transactions from templates. Used for recurring transactions"
-        print "editt, et              Edit a transaction template"
-        print "search, s, /           Search for transactions (SQL \"x ILIKE y\")"
-        print "partial, ps, /?        Search for transactions (SQL \"x ILIKE %y%\")"
-        print "exact, es, //          Search for transactions (SQL \"x == y\""
-        print "                       "
-        print "                       "
+        print("Help:")
+        print("Command                Description")
+        print("--------------------------------------------------------------------------------------")
+        print("view, v                View last n transactions")
+        print("viewt, vt              View transaction templates")
+        print("add, a                 Add a new transaction")
+        print("newt, nt               Add a new transaction template")
+        print("edit, e                Edit a transaction")
+        print("delete, del, d         Delete a transaction")
+        print("deletet, delt, dt      Delete a transaction template")
+        print("stats, st              Show statistics")
+        print("help, h, ?             Show this help")
+        print("quit, exit, q, x       Quit")
+        print("aft                    Add transactions from templates. Used for recurring transactions")
+        print("editt, et              Edit a transaction template")
+        print("search, s, /           Search for transactions (SQL \"x ILIKE y\")")
+        print("partial, ps, /?        Search for transactions (SQL \"x ILIKE %y%\")")
+        print("exact, es, //          Search for transactions (SQL \"x == y\"")
+        print("                       ")
+        print("                       ")
     elif command in ["quit", "exit", "q", "x"]:
         quit = True
     else:
