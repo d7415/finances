@@ -177,14 +177,14 @@ class Template(Base):
 ## 
 def add():
     t = Transaction()
-    date = raw_input("Date: ")
+    date = input("Date: ")
     if date == "":
         date = today
     elif date.lower() == "y":
         date = yday
     t.date = int(date)
     dplace = session.query(Transaction).order_by(desc(Transaction.id)).first().place
-    p = raw_input("Place (%s): " % dplace.name)
+    p = input("Place (%s): " % dplace.name)
     if not p:
         t.place = dplace
         print(">> %s" % (t.place.name))
@@ -192,12 +192,12 @@ def add():
         while p[0] in '%/':
             for r in session.query(Place.name).filter(Place.name.ilike("%"+p[1:]+"%")).all():
                 print("  > %s" % (r))
-            p = raw_input("Place: ")
+            p = input("Place: ")
         (t.place, new) = Place.get(p, session)
         print(">> %s%s" % ("New Place: " if new else "", t.place.name))
     dcat = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first()
     dcat = dcat.category if dcat else None
-    c = raw_input("Category (%s): " % (dcat.name if dcat else "?"))
+    c = input("Category (%s): " % (dcat.name if dcat else "?"))
     if not c:
         t.category = dcat
         print(">> %s" % (t.category.name))
@@ -205,12 +205,12 @@ def add():
         while c[0] in '%/':
             for r in session.query(Category.name).filter(Category.name.ilike("%"+c[1:]+"%")).all():
                 print("  > %s" % (r))
-            c = raw_input("Category: ")
+            c = input("Category: ")
         (t.category, new) = Category.get(c, session)
         print(">> %s%s" % ("New Category: " if new else "", t.category.name))
     dm = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first()
     dm = dm.method if dm else None
-    m = raw_input("Method (%s): " % (dm.name if dm else "?"))
+    m = input("Method (%s): " % (dm.name if dm else "?"))
     if not m:
         t.method = dm
         print(">> %s" % (t.method.name))
@@ -219,8 +219,8 @@ def add():
         print(">> %s%s" % ("New Method: " if new else "", t.method.name))
     dpence = session.query(Transaction).filter_by(place=t.place).filter_by(category=t.category).filter_by(method=t.method).order_by(desc(Transaction.id)).first()
     dpence = dpence.pence if dpence else 0
-    t.pence = int(raw_input("Cost (p) (%d): " % dpence) or dpence)
-    t.comment = raw_input("Comments: ")
+    t.pence = int(input("Cost (p) (%d): " % dpence) or dpence)
+    t.comment = input("Comments: ")
     session.add(t)
     session.commit()
     print(t.header())
@@ -229,7 +229,7 @@ def add():
 def add_double_entry():
     t = Transaction()
     t2 = Transaction()
-    date = raw_input("Date: ")
+    date = input("Date: ")
     if date == "":
         date = today
     elif date.lower() == "y":
@@ -244,7 +244,7 @@ def add_double_entry():
 
     dm = session.query(Transaction).filter_by(place=t.place).order_by(desc(Transaction.id)).first()
     dm = dm.method if dm else None
-    m = raw_input("From Method (%s): " % (dm.name if dm else "?"))
+    m = input("From Method (%s): " % (dm.name if dm else "?"))
     if not m:
         t.method = dm
         print(">> %s" % (t.method.name))
@@ -252,7 +252,7 @@ def add_double_entry():
         (t.method, new) = Method.get(m, session)
         print(">> %s%s" % ("New Method: " if new else "", t.method.name))
 
-    m = raw_input("To Method (%s): " % (dm.name if dm else "?"))
+    m = input("To Method (%s): " % (dm.name if dm else "?"))
     if not m:
         t2.method = dm
         print(">> %s" % (t2.method.name))
@@ -261,9 +261,9 @@ def add_double_entry():
         print(">> %s%s" % ("New Method: " if new else "", t2.method.name))
     dpence = session.query(Transaction).filter_by(place=t.place).filter_by(category=t.category).filter_by(method=t.method).order_by(desc(Transaction.id)).first()
     dpence = abs(dpence.pence) if dpence else 0
-    t.pence = int(raw_input("Amount (p) (%d): " % dpence) or dpence)
+    t.pence = int(input("Amount (p) (%d): " % dpence) or dpence)
     t2.pence = -t.pence
-    t.comment = raw_input("Comments: ")
+    t.comment = input("Comments: ")
     session.add(t)
     session.commit()
     t2.comment = t.comment + " (#%d)" % (t.id)
@@ -276,28 +276,28 @@ def add_double_entry():
 
 def add_template():
     t = Template()
-    date = raw_input("Date (Day of Month) [01]: ")
+    date = input("Date (Day of Month) [01]: ")
     if date == "":
         date = "01"
     t.date = int(date)
-    p = raw_input("Place: ")
+    p = input("Place: ")
     while p[0] in '%/':
         for r in session.query(Place.name).filter(Place.name.ilike("%"+p[1:]+"%")).all():
             print("  > %s" % (r))
-        p = raw_input("Place: ")
+        p = input("Place: ")
     (t.place, new) = Place.get(p, session)
     print(">> %s%s" % ("New Place: " if new else "", t.place.name))
-    c = raw_input("Category: ")
+    c = input("Category: ")
     while c[0] in '%/':
         for r in session.query(Category.name).filter(Category.name.ilike("%"+c[1:]+"%")).all():
             print("  > %s" % (r))
-        c = raw_input("Category: ")
+        c = input("Category: ")
     (t.category, new) = Category.get(c, session)
     print(">> %s%s" % ("New Category: " if new else "", t.category.name))
-    (t.method, new) = Method.get(raw_input("Method: "), session)
+    (t.method, new) = Method.get(input("Method: "), session)
     print(">> %s%s" % ("New Method: " if new else "", t.method.name))
-    t.pence = int(raw_input("Cost (p): "))
-    t.comment = "[Auto] " + raw_input("Comments: ")
+    t.pence = int(input("Cost (p): "))
+    t.comment = "[Auto] " + input("Comments: ")
     session.add(t)
     session.commit()
     print(t.header())
@@ -306,7 +306,7 @@ def add_template():
 
 def add_from_templates():
     import datetime
-    s_date = raw_input("Statement Date: ")
+    s_date = input("Statement Date: ")
     if s_date == "":
         s_date = today
     elif s_date.lower() == "y":
@@ -331,33 +331,33 @@ def add_from_templates():
 
 
 def edit(t):
-    newval = raw_input("Date (%s): " % t.date)
+    newval = input("Date (%s): " % t.date)
     if newval:
         t.date = int(newval)
-    newval = raw_input("Place (%s): " % t.place.name)
+    newval = input("Place (%s): " % t.place.name)
     while newval and newval[0] in '%/':
         for r in session.query(Place.name).filter(Place.name.ilike("%"+newval[1:]+"%")).all():
             print("  > %s" % (r))
-        newval = raw_input("Place: ")
+        newval = input("Place: ")
     if newval:
         (t.place, new) = Place.get(newval, session)
         print(">> %s%s" % ("New Place: " if new else "", t.place.name))
-    newval = raw_input("Category (%s): " % t.category.name)
+    newval = input("Category (%s): " % t.category.name)
     while newval and newval[0] in '%/':
         for r in session.query(Category.name).filter(Category.name.ilike("%"+newval[1:]+"%")).all():
             print("  > %s" % (r))
-        newval = raw_input("Category: ")
+        newval = input("Category: ")
     if newval:
         (t.category, new) = Category.get(newval, session)
         print(">> %s%s" % ("New Category: " if new else "", t.category.name))
-    newval = raw_input("Method (%s): " % t.method.name)
+    newval = input("Method (%s): " % t.method.name)
     if newval:
         (t.method, new) = Method.get(newval, session)
         print(">> %s%s" % ("New Method: " if new else "", t.method.name))
-    newval = raw_input("Cost (%s): " % t.pence)
+    newval = input("Cost (%s): " % t.pence)
     if newval:
         t.pence = int(newval)
-    newval = raw_input("Comments (%s): " % t.comment)
+    newval = input("Comments (%s): " % t.comment)
     if newval:
         t.comment = newval
     session.commit()
@@ -366,25 +366,25 @@ def edit(t):
 
 
 def edit_template(t):
-    newval = raw_input("Date (%s): " % t.date)
+    newval = input("Date (%s): " % t.date)
     if newval:
         t.date = int(newval)
-    newval = raw_input("Place (%s): " % t.place.name)
+    newval = input("Place (%s): " % t.place.name)
     if newval:
         (t.place, new) = Place.get(newval, session)
         print(">> %s%s" % ("New Place: " if new else "", t.place.name))
-    newval = raw_input("Category (%s): " % t.category.name)
+    newval = input("Category (%s): " % t.category.name)
     if newval:
         (t.category, new) = Category.get(newval, session)
         print(">> %s%s" % ("New Category: " if new else "", t.category.name))
-    newval = raw_input("Method (%s): " % t.method.name)
+    newval = input("Method (%s): " % t.method.name)
     if newval:
         (t.method, new) = Method.get(newval, session)
         print(">> %s%s" % ("New Method: " if new else "", t.method.name))
-    newval = raw_input("Cost (%s): " % t.pence)
+    newval = input("Cost (%s): " % t.pence)
     if newval:
         t.pence = int(newval)
-    newval = raw_input("Comments (%s): " % t.comment)
+    newval = input("Comments (%s): " % t.comment)
     if newval:
         t.comment = "[Auto] " + newval
     session.commit()
@@ -450,11 +450,11 @@ today  = int(time.strftime('%Y%m%d'))
 yday   = int(time.strftime('%Y%m%d', time.localtime(time.time()-   86400)))
 back7  = int(time.strftime('%Y%m%d', time.localtime(time.time()- 7*86400)))
 back30 = int(time.strftime('%Y%m%d', time.localtime(time.time()-30*86400)))
-numdays = (time.time() - time.mktime(time.strptime(str(session.query(func.min(Transaction.date)).first()[0]), '%Y%m%d')))/86400
+numdays = int((time.time() - time.mktime(time.strptime(str(session.query(func.min(Transaction.date)).first()[0]), '%Y%m%d')))/86400)
 
 while not quit:
     
-    user_input = raw_input("What do you want to do today? ")
+    user_input = input("What do you want to do today? ")
     command = user_input.strip(" ").split(" ", 1)[0]
     params=[]
     try:
@@ -503,7 +503,7 @@ while not quit:
             if t:
                 print(t.header())
                 print(t.view())
-                if raw_input("Delete this transaction? (y/N): ").lower() == "y":
+                if input("Delete this transaction? (y/N): ").lower() == "y":
                     session.delete(t)
                     session.commit()
             else:
@@ -516,7 +516,7 @@ while not quit:
             if t:
                 print(t.header())
                 print(t.view())
-                if raw_input("Delete this template? (y/N): ").lower() == "y":
+                if input("Delete this template? (y/N): ").lower() == "y":
                     session.delete(t)
                     session.commit()
             else:
